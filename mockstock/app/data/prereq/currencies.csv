@@ -1,0 +1,5 @@
+,id,currency,currency_name,exchange,exchange_name,uplim_1,uplim_2,uplim_3
+0,1,USD,American Dollar,NYSE,New York Stock Exchange,200000,330000,600000
+1,2,INR,Indian Rupee,BSE,Bombay Stock Exchange,300000,495000,900000
+2,3,JPY,Japanese Yen,TSE,Tokyo Stock Exchange,501000,846650,1503000
+3,4,EUR,Euro,ENX,Euronext Stock Exchange,99000,163350,297000
