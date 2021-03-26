@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}Order Confirmation{% endblock %}
+{% block javascript %}
+{% endblock %}
+
+{% block content %}
+    <h1>Order Confirmation</h1>
+
+    <DIV class="row">
+      <div class="two columns">&nbsp;</div>
+
+      <div class="eight columns" style="text-align: center;">
+        <P>
+          <strong>You have <span id="timer"></span> seconds to confirm the order at these new prices.</strong><BR>
+          While you were placing your order, the following prices have changed.<BR>
+          {% if affordable==0 %}
+          Your original order is affordable at new prices. Please confirm if you'd like to proceed!</BR>
+          {% elif affordable==2 %}
+          Your original order was no longer affordable at new prices.<BR>
+          We have reduced the purchase quantities in a proportional manner so as to make your original order affordable at new prices.<BR>
+          {% endif %}
+        </P>
+        <TABLE class="u-full-width">
+          <THEAD>
+            <TR>
+              <TH>Stock</TH>
+              <TH>Old Price</TH>
+              <TH>New Price</TH>
+              <TH>Change</TH>
+            </TR>
+          </THEAD>
+          <TBODY>
+            {% for i in stonx %}
+            {% if old_prices[i.id]['current_price'] != new_prices[i.id]['current_price'] %}
+            <TR>
+              <TD>{{ i.name }}</TD>
+              <TD class="money_amount_only">{{ old_prices[i.id]['current_price'] }}</TD>
+              <TD class="money_amount_only">{{ new_prices[i.id]['current_price'] }}</TD>
+              <TD class="money_amount_change_figure">{{ new_prices[i.id]['current_price']-old_prices[i.id]['current_price'] }}</TD>
+            </TR>
+            {% endif %}
+            {% endfor %}
+          </TBODY>
+        </TABLE>
+      </div>
+
+      <div class="two columns">&nbsp;</div>
+    </DIV>
+    <BR>
+    <H2>Summary</H2>
+    <div class="row">
+      <div class="six columns">
+        <H3>Stocks</H3>
+        <table class="u-full-width">
+          <thead>
+            <tr>
+              <th>Stock</th>
+              <th>Details</th>
+              <th>Total</th>
+          </thead>
+          <tbody>
+            {% for i in stonx %}
+            {% if new_order[loop.index0]['qty'] != 0%}
+            <TR>
+              <td>{{i.name}}</td>
+              {% set action='NONE' %}
+              {% if new_order[loop.index0]['option'] == 0  %}
+              {% set action='BUY' %}
+              {% elif new_order[loop.index0]['option']==1 %}
+              {% set action='SELL' %}
+              {% endif %}
+              <td>{{action}} {{new_order[loop.index0]['qty']}} units at <span class="money_amount_only">{{new_prices[i.id]['current_price']}} </span> </TD>
+              <td class="money_amount_only">{{new_prices[i.id]['current_price']*new_order[loop.index0]['qty']}} </td>
+            </TR>
+            {% endif %}
+            {% endfor %}
+
+          </tbody>
+        </table>
+      </div>
+      <!--<div class="one column">&nbsp;</div>-->
+      <div class="six columns">
+        <H3>Cash</H3>
+        <table class="u-full-width">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Cash in Hand</td>
+              <td class="money_amount_only"> {{session['portfolio']['currency_holding'][which_curr]}}</td>
+            </tr>
+            <tr>
+              <td>Net Change</td>
+              <td class="money_amount_change_figure">{{0-total_exp}}</td>
+            </tr>
+            <tr>
+              <td>Cash left</td>
+              <td class="money_amount_only">{{ session['portfolio']['currency_holding'][which_curr]-total_exp}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <BR><BR>
+    <div class="row">
+      <div class="six columns">
+        <a class="button confirm_button u-full-width" href="{{url_for('complete_order')}}">Confirm Order</a>
+      </div>
+        <div class="six columns">
+          <a class="button cancel_button u-full-width" href="{{url_for('cancel_order', reason='cancel')}}">Cancel Order</a>
+        </div>
+    </div>
+
+    <script>
+      FormatMoneyAmount('{{curr_name}}');
+      var start=30;
+      document.getElementById("timer").innerHTML=start;
+      var timer = setInterval(refreshTime, 1000);
+
+      function refreshTime() {
+        if(start>0){
+          start--;
+          document.getElementById("timer").innerHTML=start;
+        }
+        else{
+          window.location.href = "{{url_for('cancel_order', reason='timer')}}";
+        }
+      }
+    </script>
+
+
+{% endblock %}

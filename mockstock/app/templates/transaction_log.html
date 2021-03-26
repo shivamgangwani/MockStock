@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Transaction Log{% endblock %}
+{% block content %}
+    <h1>Transaction Log</h1>
+    {% if(transaction_data|length==0) %}
+      <H3>No transactions have been made yet!</H3>
+
+    {% else  %}
+
+    {% if limit > 0 %}
+    <P style="text-align: center;">Showing the last {{limit}} transactions<BR>
+    <A href="{{url_for('transaction_log', limit=0)}}">View Full Transaction History</A>
+    </P>
+    {% endif %}
+    <TABLE class="standardtable u-full-width">
+      <THEAD>
+        <TH>Time</TH>
+        <TH>Market</TH>
+        <TH>Description</TH>
+      </THEAD>
+      <TBODY>
+        {% for i in transaction_data %}
+        <TR>
+        {% for j in i %}
+        <TD>{{j}}</TD>
+        {% endfor %}
+        </TR>
+        {% endfor %}
+      </TBODY>
+    </TABLE>
+    {% endif %}
+{% endblock %}

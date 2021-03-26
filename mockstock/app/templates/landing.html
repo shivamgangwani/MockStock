@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+
+<HEAD>
+  {% include 'resources/header.html' %}
+  <TITLE>Mock Stock</TITLE>
+</HEAD>
+<body>
+  <div id="landing" class="container">
+      <section>
+        <DIV class="row">
+          <DIV class="twelve columns">
+            <DIV class="u-full-width">
+              <BR><BR><BR><BR><BR>
+              <H1 style="font-size: 96px;">Mock Stock</H1>
+              <!-- <IMG style="width: 400px; height: auto;" src="{{url_for('static', filename='img/mockstock.png')}}" /> -->
+            </DIV>
+          </DIV>
+        </DIV>
+      </section>
+      <!-- <BR><BR><BR><BR><BR> -->
+      <a href="{{url_for('login')}}">
+        <DIV class="u-full-width" id="proceed">
+          <H2>Proceed</H2>
+        </DIV>
+      </a>
+
+      {% include 'resources/flash.html' %}
+
+  </div>
+</body>
+
+</html>

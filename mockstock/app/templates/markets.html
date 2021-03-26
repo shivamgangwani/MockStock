@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block javascript %}
+
+function DisableMarkets(){
+  var mkts=['BSE', 'ENX', 'NYSE', 'TSE', 'FOREX'];
+  for (i = 0; i < mkts.length; i++) {
+    document.getElementById(mkts[i]).classList.add("disabled");
+  }
+  document.getElementById('market-status').classList.remove('invisible')
+}
+{% endblock %}
+{% block title %}Markets{% endblock %}
+{% block content %}
+
+    <h1>Markets</h1>
+    <H2 id="market-status" class="loss invisible">Closed</H2>
+    <DIV class="row">
+
+    {% for key, i in currency_data.items() %}
+    {% if loop.index0%2==0 and loop.index0 != 0%}
+    </DIV>
+    <DIV class="row">
+    {% endif %}
+        <A id="{{i.exchange_short}}" class="button market_button six columns" href="{{url_for('market_view', mkt=i.exchange_short)}}">
+          <DIV class="mkt_name">{{i.exchange_full}}</DIV>
+        </A>
+    {% endfor %}
+    </DIV>
+
+    <div class="row">
+      <a id="FOREX" class="button market_button twelve columns" href="{{url_for('market_view', mkt='FOREX')}}">
+        <div class="mkt_name">Currency Exchange</div>
+      </a>
+    </div>
+
+    {% if mkt_status['markets_open'] == 0 %}
+    <script type="text/javascript">
+      DisableMarkets()
+    </script>
+    {% endif %}
+
+{% endblock %}

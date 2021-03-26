@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% from "resources/_formhelpers.html" import render_field %}
+{% block title %}{{mkt}}{% endblock %}
+{% block javascript %}
+var portfolio_data = {{session['portfolio']|safe}};
+var rates = {{exchange_rates|safe}};
+{% endblock %}
+
+{{holdings}}
+
+{% block content %}
+<h1 class="big">{{mkt}}</h1>
+<br><br>
+  <FORM action="" METHOD="POST">
+    {{ form.hidden_tag() }}
+
+    <DIV class="row">
+      <DIV class="five columns">
+        {{render_field(form.from_currency, class="u-full-width", onchange='UpdateThings_FOREX_FULL()')}}
+        <p><strong>Cash-in-hand:</strong> <span id="cash_in_hand_FROMCURR">$ABC</span></p>
+        {{render_field(form.amount, placeholder="0", maxlength='10', class="u-full-width", onchange='UpdateThings_FOREX()', oninput='UpdateThings_FOREX()')}}
+        <p><strong>Exchange Rate:</strong> <span id="exch_rate">$ABC</span></p>
+        <p style="color: red;"><strong><span id="insuffFunds"></span></strong>
+
+      </DIV>
+      <div class="two columns">&nbsp;</div>
+      <DIV class="five columns">
+        {{render_field(form.to_currency, class="u-full-width", onchange='UpdateThings_FOREX_FULL()')}}
+        <p><strong>Cash-in-hand:</strong> <span id="cash_in_hand_TOCURR">$ABC</span></p>
+        <!--<P><strong>Amount:</strong><br> <span id="target_conv_amt">¥XYZ</span> </P>
+        -->
+        <label for="amount">Amount</label>
+        <input class="u-full-width" id="amount_reverse" maxlength="10" name="amount" onchange="UpdateThings_FOREX_REVERSE()" oninput="UpdateThings_FOREX_REVERSE()" placeholder="0" required="" type="text" value="">
+      </DIV>
+    </DIV>
+  <BR>
+    <div class="row">
+      <div class="five columns">
+        <H3 id="summary_from_curr_name">USD</H3>
+        <table class="standardtable u-full-width">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Cash in Hand</td>
+              <td id="summary_from_curr_cashinhand">$65,000</td>
+            </tr>
+            <tr>
+              <td>Net Change</td>
+              <td class="loss">▼ <span id="summary_from_curr_netchange">$15,000</span></td>
+            </tr>
+            <tr>
+              <td>Balance</td>
+              <td id="summary_from_curr_cashleft">$50,000</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="two columns">&nbsp;</div>
+      <div class="five columns">
+        <H3 id="summary_to_curr_name">JPY</H3>
+        <table class="standardtable u-full-width">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Cash in Hand</td>
+              <td id="summary_to_curr_cashinhand">¥65,000</td>
+            </tr>
+            <tr>
+              <td>Net Change</td>
+              <td class="gain">▲<span id="summary_to_curr_netchange">¥5,000</span></td>
+            </tr>
+            <tr>
+              <td>Balance</td>
+              <td id="summary_to_curr_cashleft">¥70,000</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!--id="purchase"-->
+    <BR>
+    <div class="row">
+        <input id="purchase" class="button confirm_button u-full-width" type="submit" value="Confirm Order">
+    </div>
+  </FORM>
+
+
+  <HR>
+
+  <BR>
+  <H3>Exchange Rates</h3>
+  <table class="standardtable u-full-width">
+    <thead>
+      <tr>
+        <th>Pair</th>
+        <th>Rate</th>
+        <th>Inverse Rate</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i in range(1, currencies|length + 1) %}
+        {% for j in range(i+1, currencies|length + 1) %}
+        <TR>
+        <TD>{{currencies[i].short_name}}-{{currencies[j].short_name}}</TD>
+        <TD>{{exchange_rates[i][j]|round(2)}}</TD>
+        <TD>{{ (1/(exchange_rates[i][j]) )|round(2)}}</TD>
+        </TR>
+        {% endfor %}
+      {% endfor %}
+    </tbody>
+  </table>
+<BR><BR>
+  <hr>
+
+  <H3>Currency Portfolio</H3>
+  <table id="currency_table" class="standardtable u-full-width">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Currency</th>
+        <th>In hand</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for i in range(1, currencies|length + 1) %}
+      <TR>
+        <TD>{{currencies[i].short_name}}</TD>
+        <TD>{{currencies[i].full_name}}</TD>
+        <TD>{{session['portfolio']['currency_holding'][i]}}</TD>
+      </TR>
+      {% endfor %}
+    </tbody>
+
+  <script>
+    UpdateThings_FOREX();
+    UpdateCurrencyTable();
+  </script>
+
+{% endblock %}

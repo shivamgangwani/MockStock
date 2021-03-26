@@ -1,0 +1,26 @@
+{% extends "admin/base.html" %}
+{% block javascript %}{% endblock %}
+{% block content %}
+
+<section>
+    <H2>Database Access</H2>
+    <P> EACH CLICK QUERIES THE DB. <BR>DON'T USE FREQUENTLY, IT WILL SLOW THE SYSTEM DOWN</p>
+    <A class="button" href="{{url_for('admin_views', view='user_data')}}">User Data</A>
+    <A class="button" href="{{url_for('admin_views', view='transaction_data')}}">Transaction Log</A>
+    <A class="button" href="{{url_for('admin_views', view='currency_portfolio_data')}}">Currency Portfolio Data</A>
+    <BR>
+    <A class="button" href="{{url_for('admin_views', view='portfolio_data')}}">Portfolio Data</A>
+    <A class="button" href="{{url_for('admin_views', view='stock_prices_data')}}">Stock Prices Data</A>
+    <BR>
+    <A class="button" href="{{url_for('admin_views', view='news_data')}}">News Data</A>
+    <br>
+
+    <HR>
+    <H2>Excel Access</H2>
+    <A class="button" href="{{url_for('admin_views_excel', view='exchange_rates_info')}}">Exchange Rates</A>
+    <A class="button" href="{{url_for('admin_views_excel', view='currency_info')}}">Currency Info</A>
+    <A class="button" href="{{url_for('admin_views_excel', view='stock_info')}}">Stocks Info</A>
+</section>
+
+
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block javascript %}
+{% include 'resources/general.js' %}
+{% endblock %}
+
+{% block content %}
+    <h1>Dashboard</h1>
+
+    <h3>{{session['user']['team']}}</h3>
+    <hr>
+    <H3>Stocks</H3>
+    <table id="dashboard_stocks" class="standardtable u-full-width">
+      <thead>
+        <tr>
+          <th>Stock</th>
+          <th style="display:none;"></th>
+          <th>Qty</th>
+          <th>Unit price</th>
+          <th>Book Value</th>
+          <th>Market Value</th>
+          <th>Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in range(1, stocks|length +1) %}
+        {% if session['portfolio']['stock_holding'][i]['qty'] != 0 %}
+        <tr>
+          <td>{{stocks[i].name}}</td>
+          <td style="display:none;">{{currencies[ stocks[i].currency ].short_name}}</td>
+          <td>{{session['portfolio']['stock_holding'][i]['qty']}}</td>
+          <td class="money_amount_only">{{prices[i]['current_price']}}</td>
+          <td class="money_amount_only">{{session['portfolio']['stock_holding'][i]['book_value']}}</td>
+          <td class="money_amount_only">{{session['portfolio']['stock_holding'][i]['qty']*prices[i]['current_price']}}</td>
+          <td class="money_amount_change_figure">▲${{session['portfolio']['stock_holding'][i]['qty']*prices[i]['current_price'] - session['portfolio']['stock_holding'][i]['book_value']}}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <BR><BR>
+
+    <H3>Currency</H3>
+    <table id="currency_table" class="standardtable u-full-width">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Currency</th>
+          <th>In hand</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for i in range(1, currencies|length + 1) %}
+        {% if session['portfolio']['currency_holding'][i] != 0 %}
+        <TR>
+          <TD>{{currencies[i].short_name}}</TD>
+          <TD>{{currencies[i].full_name}}</TD>
+          <TD>{{session['portfolio']['currency_holding'][i]}}</TD>
+        </TR>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <BR><BR>
+
+
+
+
+    <script>
+      UpdateCurrencyTable();
+      FormatDashboardStocks();
+    </script>
+{% endblock %}

@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% from "resources/_formhelpers.html" import render_field_nolabel %}
+
+{% block javascript %}
+var cash_balance={{session['portfolio']['currency_holding'][curr] }};
+var stonk_ids={{stonk_ids|safe}}
+var stock_holdinz={{session['portfolio']['stock_holding']|safe}}
+var pricez_z = {{prices|safe}}
+
+var x = {{curr_name|tojson}};
+
+function UpdateStocksForm(curr=x){
+  var purch_button= document.getElementById('place_order');
+  var table=document.getElementById("stonks_form");
+  var re = /\d+\.\d+/g;
+
+  var buy_amount=0;
+  var sell_amount=0;
+  for (var i = 1, row; row = table.rows[i]; i++) {
+     //iterate through rows
+     //rows would be accessed using the "row" variable assigned in the for loop
+     var qty=0;
+     var price=0;
+     var buy=true;
+     var stok_ID=0;
+     for (var j = 0, col; col = row.cells[j]; j++)
+     {
+       if(i!=0)
+       {
+         if(j==1){
+           stok_ID = col.innerHTML;
+           price = pricez_z[stok_ID]['current_price'];
+         }
+         else if(j==5){
+           buy=(col.children[0].value==0);
+         }
+         else if(j==6){
+           if(col.children[0].value.length!=0){
+             qty=parseInt(col.children[0].value);
+           }
+           if(buy==false){
+             col.children[0].setAttribute("max", stock_holdinz[ stonk_ids[i-1] ]['qty']);
+             if(parseInt(col.children[0].value) > stock_holdinz[ stonk_ids[i-1] ]['qty']){
+               col.children[0].value=stock_holdinz[ stonk_ids[i-1] ]['qty'];
+               qty=parseInt(col.children[0].value);
+             }
+           }
+         }
+         else if(j==7){
+           col.innerHTML= formatMoney(qty*price, curr);
+           if(buy==true){
+             buy_amount+=qty*price;
+           }
+           else{
+             sell_amount+=qty*price;
+           }
+         }
+       }
+    }
+  }
+  document.getElementById("buy_amounts").innerHTML=formatMoney(buy_amount, curr);
+  document.getElementById("sell_amounts").innerHTML=formatMoney(sell_amount, curr);
+
+  var have_money = cash_balance;
+  var have_suff_funds =  ( (buy_amount-sell_amount) <= have_money);
+  var insuff_funds=document.getElementById("insuffFunds");
+  if(!have_suff_funds) {
+    purch_button.disabled=true;
+    purch_button.classList.add('disabled');
+    insuff_funds.innerHTML="Insufficent Funds!";
+  }
+  else{
+    purch_button.disabled=false;
+    purch_button.classList.remove('disabled');
+    insuff_funds.innerHTML="";
+  }
+}
+{% endblock %}
+
+{% block title %}{{mkt}}{% endblock %}
+{% block content %}
+    <h1 class="big">{{mkt}}</h1>
+
+    <form action = "" method = "POST">
+      {{form.hidden_tag() }}
+    <table id="stonks_form" class="u-full-width standardtable">
+      <thead>
+        <tr>
+          <th>Stock</th>
+          <th style="display: none"></th>
+          <th>Current Price</th>
+          <th>Opening Price</th>
+          <th>Change</th>
+          <th>Option</th>
+          <th>Qty</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in stonks %}
+        <tr>
+          <td>{{i.name}}</td>
+          <td style="display: none">{{i.id}}</td>
+          <td class="money_amount_only">{{prices[i.id]['current_price']}}</td>
+          <td class="money_amount_only">{{prices[i.id]['opening_price']}}</td>
+          <td class="money_amount_change_figure">{{prices[i.id]['current_price']-prices[i.id]['opening_price']}}</td>
+          <td>
+            {{render_field_nolabel(form.stox[loop.index0].option, class="u-full-width", oninput="UpdateStocksForm()")}}
+          </td>
+          <td>
+            {{render_field_nolabel(form.stox[loop.index0].qty, placeholder="0", oninput="UpdateStocksForm()", default="0", min="0", size="6", maxlength="6", class="u-full-width")}}
+          </td>
+          <td class="money_amount_only">0</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <P><strong>Cash in hand:</strong> <span id="cash_balance_stonx" class="money_amount_only">{{session['portfolio']['currency_holding'][curr] }}</span><BR>
+    <strong>Purchase Amount:</strong> <span id="buy_amounts" class="money_amount_only"></span><BR>
+    <strong>Sell Amount:</strong> <span id="sell_amounts" class="money_amount_only"></span></P>
+    <p style="color: red;"><strong><span id="insuffFunds"></span></strong><BR>
+    <input id="place_order" class="button-primary" type="submit" value="Place Order">
+  </form>
+
+  <HR>
+    <H3>Portfolio</H3>
+    <table id="dashboard_stocks" class="standardtable u-full-width">
+      <thead>
+        <tr>
+          <th>Stock</th>
+          <th style="display:none;"></th>
+          <th>Qty</th>
+          <th>Unit price</th>
+          <th>Book Value</th>
+          <th>Market Value</th>
+          <th>Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in range(1, stonks|length +1) %}
+        <tr>
+          <td>{{stonks[i-1].name}}</td>
+          <td style="display:none;">{{currencies[ stonks[i-1].currency ].short_name}}</td>
+          <td>{{session['portfolio']['stock_holding'][ stonks[i-1].id ]['qty']}}</td>
+          <td class="money_amount_only">{{prices[ stonks[i-1].id ]['current_price']}}</td>
+          <td class="money_amount_only">{{session['portfolio']['stock_holding'][stonks[i-1].id]['book_value']}}</td>
+          <td class="money_amount_only">{{session['portfolio']['stock_holding'][stonks[i-1].id]['qty']*prices[ stonks[i-1].id  ]['current_price']}}</td>
+          <td class="money_amount_change_figure">▲${{session['portfolio']['stock_holding'][stonks[i-1].id]['qty']*prices[ stonks[i-1].id ]['current_price'] - session['portfolio']['stock_holding'][stonks[i-1].id]['book_value']}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  <script>
+    FormatMoneyAmount('{{curr_name}}');
+    UpdateStocksForm('{{curr_name}}');  
+  </script>
+
+{% endblock %}

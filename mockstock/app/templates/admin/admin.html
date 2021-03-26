@@ -1,0 +1,39 @@
+{% extends "admin/base.html" %}
+{% block content %}
+
+        <H5>Controls</H5>
+        <DIV class="u-full-width">
+          {% if mkt_status['markets_open']==0 %}
+          <A class="confirm_button button" href="{{url_for('switch_market_status')}}">Open Market</A>
+          {% else %}
+          <A class="cancel_button button" href="{{url_for('switch_market_status')}}">Close Market</A>
+          {% endif %}
+          <BR>
+          <A class="button button-primary" href="{{url_for('change_round', what='prev')}}">Prev Round</A>
+          <A class="button button-primary" href="{{url_for('change_round', what='next')}}">Next Round</A>
+          <BR>
+          <A class="button button-primary" href="{{url_for('admin_export_result')}}">Export Result</A>
+        </DIV>
+        <HR>
+        <TABLE class="u-full-width">
+          <THEAD>
+            <TR>
+              <TH>Item</TH>
+              <TH>Value</TH>
+          </THEAD>
+          <TBODY>
+            <TR>
+              <TD>Current Round</TD>
+              <TD class="confirm_button">{{mkt_status['current_round']}}</TD>
+            </TR>
+            <TR>
+              <TD>Market Status</TD>
+              {% if mkt_status['markets_open']==0 %}
+              <TD class="cancel_button">CLOSED</TD>
+              {% else %}
+              <TD class="confirm_button">OPEN</TD>
+              {% endif %}
+            </TR>
+          <TBODY>
+        </TABLE>
+{% endblock %}

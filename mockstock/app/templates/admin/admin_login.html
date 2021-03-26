@@ -1,0 +1,17 @@
+{% extends "admin/base.html" %}
+{% block javascript %}{% endblock %}
+{% from "resources/_formhelpers.html" import render_field %}
+{% block content %}
+      <form method="POST">
+        {{ form.hidden_tag() }}
+        <H3>Login</H3>
+        <DIV class="row">
+        <DIV class="four columns offset-by-four">
+          {{render_field(form.user, class="u-full-width", placeholder="Username")}}
+          {{render_field(form.password, class="u-full-width", placeholder="Password")}}
+          <input id="submit_button" class="button-primary u-full-width" type="submit" value="Submit">
+        </DIV>
+      </DIV>
+      </a>
+    </FORM>
+{% endblock %}

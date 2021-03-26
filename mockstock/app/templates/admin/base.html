@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+
+<HEAD>
+  {% include 'resources/header.html' %}
+  <script type="text/javascript">
+    {% block javascript %}{% endblock %}
+  </script>
+  <TITLE>Admin area</TITLE>
+</HEAD>
+<body>
+  <div id="landing" class="container">
+      <section>
+        <DIV class="row">
+          <DIV class="twelve columns">
+            <DIV class="u-full-width">
+              <H1>Admin Area</H1>
+              {% if session['admin']==True %}
+              <DIV class="u-full-width">
+                <A class="button confirm_button" href="{{url_for('admin_area')}}">Control Area</A>
+                <A class="button" href="{{url_for('admin_view_portal')}}">View Data</A>
+                <br>
+                <A class="button" href="{{url_for('admin_logout')}}">Logout</A>
+
+              </DIV>
+              {% endif %}
+              <HR>
+            </DIV>
+          </DIV>
+        </DIV>
+      </section>
+      {% include 'resources/flash.html' %}
+      <BR>
+      {% block content %}{% endblock %}
+  </div>
+</body>
+
+</html>

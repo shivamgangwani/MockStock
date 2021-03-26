@@ -1,0 +1,33 @@
+{% from "resources/_formhelpers.html" import render_field %}
+
+<!doctype html>
+<html lang="en">
+
+
+<HEAD>
+  {% include 'resources/header.html' %}
+  <TITLE>Login</TITLE>
+</HEAD>
+
+<body>
+  <div class="container">
+
+    <H1>Mock Stock</H1>
+    <BR><BR><BR>
+    <section id="login">
+      <H2>Login</H2>
+      <form action = "" method = "POST">
+        {{ form.hidden_tag() }}
+        <div class="row">
+          <div class="four columns offset-by-four">
+            {{render_field(form.team_name, class="u-full-width", placeholder="Name")}}
+            {{render_field(form.password, class="u-full-width", placeholder="Name")}}
+          </div>
+        </div>
+        <input class="button-primary" type="submit" value="Login">
+      </form>
+      {% include 'resources/flash.html' %}
+</div>
+</body>
+
+</html>

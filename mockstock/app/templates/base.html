@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  {% include 'resources/header.html' %}
+
+  <title>{% block title %}{% endblock %}</title>
+  <script type="text/JavaScript">
+  {% include 'resources/general.js' %}
+
+  {% block javascript %}
+  {% endblock %}
+</script>
+</head>
+
+<body>
+  <div class="container">
+
+    <section id="header" class="u-full-width">
+      <H1>Mock Stock</H1>
+    </section>
+
+    <section id="navbar">
+      <div class="row">
+        <a class="button hvr_anim" href="{{url_for('dashboard')}}">Dashboard</A>
+      <div class="row">
+        <a class="button hvr_anim" href="{{url_for('market_portal')}}">Markets</a>
+        <a class="button hvr_anim" href="{{url_for('news')}}">News</a>
+      </div>
+      <div class="row">
+        <a class="button hvr_anim" href="{{url_for('transaction_log', limit=30)}}">Transaction Log</a>
+        <a class="button hvr_anim" href="{{url_for('logout')}}">Logout</a>
+      </div>
+    </section>
+    {% include 'resources/flash.html' %}
+    <hr>
+
+    {% block content %}{% endblock %}
+  </div>
+</body>
+
+</html>

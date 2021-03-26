@@ -1,0 +1,24 @@
+{% extends "admin/base.html" %}
+{% block content %}
+<H1>{{view}}</H1>
+{% if data|length != 0 %}
+<TABLE class='u-full-width'>
+  <TBODY>
+    <THEAD>
+      {% for i in col_names %}
+      <TH>{{i}}</TH>
+      {% endfor %}
+    </THEAD>
+
+    {% for i in data %}
+    <TR>
+      {% for j in i %}
+      <TD>{{j}}</TD>
+      {% endfor %}
+    </TR>
+    {% endfor %}
+  </TBODY>
+</TABLE>
+{% endif %}
+
+{% endblock %}

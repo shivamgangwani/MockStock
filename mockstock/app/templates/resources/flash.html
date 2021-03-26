@@ -1,0 +1,22 @@
+{% set flash_msg_types = ['notification','success', 'error'] %}
+
+{% for type in flash_msg_types %}
+{% with errors = get_flashed_messages(category_filter=[type]) %}
+{% if errors %}
+<BR>
+<div class="row">
+
+  <div class="u-full-width {{type }}" >
+    <H5 class="big">{{type}}</H5>
+
+      <ul>
+        {% for msg in errors %}
+        <li>{{ msg }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+</div>
+{% endif %}
+{% endwith %}
+
+{% endfor %}
